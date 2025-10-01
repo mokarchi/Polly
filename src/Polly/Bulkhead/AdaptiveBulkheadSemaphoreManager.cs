@@ -24,9 +24,10 @@ internal sealed class AdaptiveBulkheadSemaphoreManager : IDisposable
         
         // Initialize semaphores
         _maxParallelizationSemaphore = new SemaphoreSlim(_lastKnownMaxParallelization, _lastKnownMaxParallelization);
-        _maxQueuedActionsSemaphore = maxQueueingActions > 0 
-            ? new SemaphoreSlim(maxQueueingActions, maxQueueingActions)
-            : new SemaphoreSlim(int.MaxValue, int.MaxValue);
+        
+        // Follow the same pattern as original bulkhead: add max parallelization to max queuing
+        var maxQueuingCompounded = (int)Math.Min((long)maxQueueingActions + _lastKnownMaxParallelization, int.MaxValue);
+        _maxQueuedActionsSemaphore = new SemaphoreSlim(maxQueuingCompounded, maxQueuingCompounded);
     }
 
     /// <summary>
@@ -102,9 +103,7 @@ internal sealed class AdaptiveBulkheadSemaphoreManager : IDisposable
     /// <summary>
     /// Gets the number of slots currently available for queuing actions for execution through the bulkhead.
     /// </summary>
-    public int QueueAvailableCount => _maxQueueingActions > 0 
-        ? Math.Min(_maxQueuedActionsSemaphore.CurrentCount, _maxQueueingActions)
-        : int.MaxValue;
+    public int QueueAvailableCount => Math.Min(_maxQueuedActionsSemaphore.CurrentCount, _maxQueueingActions);
 
     public void Dispose()
     {
