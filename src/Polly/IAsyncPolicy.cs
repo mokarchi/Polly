@@ -383,14 +383,14 @@ public interface IAsyncPolicy : IsPolicy
     Task<PolicyResult<TResult>> ExecuteAndCaptureAsync<TResult>(Func<Context, CancellationToken, Task<TResult>> action, Context context, CancellationToken cancellationToken, bool continueOnCapturedContext);
 #pragma warning restore CA1068
 
-    #region ValueTask ExecuteAsync overloads
+    #region ExecuteValueTaskAsync overloads
 
     /// <summary>
     ///     Executes the specified asynchronous action within the policy.
     /// </summary>
     /// <param name="action">The action to perform.</param>
     /// <returns>A <see cref="ValueTask" /> which completes when <see cref="IAsyncPolicy"/> is registered.</returns>
-    ValueTask ExecuteAsync(Func<ValueTask> action);
+    ValueTask ExecuteValueTaskAsync(Func<ValueTask> action);
 
     /// <summary>
     ///     Executes the specified asynchronous action within the policy.
@@ -398,7 +398,7 @@ public interface IAsyncPolicy : IsPolicy
     /// <param name="action">The action to perform.</param>
     /// <param name="contextData">Arbitrary data that is passed to the exception policy.</param>
     /// <returns>A <see cref="ValueTask" /> which completes when <see cref="IAsyncPolicy"/> is registered.</returns>
-    ValueTask ExecuteAsync(Func<Context, ValueTask> action, IDictionary<string, object> contextData);
+    ValueTask ExecuteValueTaskAsync(Func<Context, ValueTask> action, IDictionary<string, object> contextData);
 
     /// <summary>
     ///     Executes the specified asynchronous action within the policy.
@@ -406,7 +406,7 @@ public interface IAsyncPolicy : IsPolicy
     /// <param name="action">The action to perform.</param>
     /// <param name="context">Context data that is passed to the exception policy.</param>
     /// <returns>A <see cref="ValueTask" /> which completes when <see cref="IAsyncPolicy"/> is registered.</returns>
-    ValueTask ExecuteAsync(Func<Context, ValueTask> action, Context context);
+    ValueTask ExecuteValueTaskAsync(Func<Context, ValueTask> action, Context context);
 
     /// <summary>
     ///     Executes the specified asynchronous action within the policy.
@@ -414,7 +414,7 @@ public interface IAsyncPolicy : IsPolicy
     /// <param name="action">The action to perform.</param>
     /// <param name="cancellationToken">A cancellation token which can be used to cancel the action.  When a retry policy in use, also cancels any further retries.</param>
     /// <returns>A <see cref="ValueTask" /> which completes when <see cref="IAsyncPolicy"/> is registered.</returns>
-    ValueTask ExecuteAsync(Func<CancellationToken, ValueTask> action, CancellationToken cancellationToken);
+    ValueTask ExecuteValueTaskAsync(Func<CancellationToken, ValueTask> action, CancellationToken cancellationToken);
 
     /// <summary>
     ///     Executes the specified asynchronous action within the policy.
@@ -423,7 +423,7 @@ public interface IAsyncPolicy : IsPolicy
     /// <param name="contextData">Arbitrary data that is passed to the exception policy.</param>
     /// <param name="cancellationToken">A cancellation token which can be used to cancel the action.  When a retry policy in use, also cancels any further retries.</param>
     /// <returns>A <see cref="ValueTask" /> which completes when <see cref="IAsyncPolicy"/> is registered.</returns>
-    ValueTask ExecuteAsync(Func<Context, CancellationToken, ValueTask> action, IDictionary<string, object> contextData, CancellationToken cancellationToken);
+    ValueTask ExecuteValueTaskAsync(Func<Context, CancellationToken, ValueTask> action, IDictionary<string, object> contextData, CancellationToken cancellationToken);
 
     /// <summary>
     ///     Executes the specified asynchronous action within the policy.
@@ -432,7 +432,7 @@ public interface IAsyncPolicy : IsPolicy
     /// <param name="context">Context data that is passed to the exception policy.</param>
     /// <param name="cancellationToken">A cancellation token which can be used to cancel the action.  When a retry policy in use, also cancels any further retries.</param>
     /// <returns>A <see cref="ValueTask" /> which completes when <see cref="IAsyncPolicy"/> is registered.</returns>
-    ValueTask ExecuteAsync(Func<Context, CancellationToken, ValueTask> action, Context context, CancellationToken cancellationToken);
+    ValueTask ExecuteValueTaskAsync(Func<Context, CancellationToken, ValueTask> action, Context context, CancellationToken cancellationToken);
 
 #pragma warning disable CA1068
     /// <summary>
@@ -443,7 +443,7 @@ public interface IAsyncPolicy : IsPolicy
     /// <param name="continueOnCapturedContext">Whether to continue on a captured synchronization context.</param>
     /// <exception cref="InvalidOperationException">Please use asynchronous-defined policies when calling asynchronous ExecuteAsync (and similar) methods.</exception>
     /// <returns>A <see cref="ValueTask" /> which completes when <see cref="IAsyncPolicy"/> is registered.</returns>
-    ValueTask ExecuteAsync(Func<CancellationToken, ValueTask> action, CancellationToken cancellationToken, bool continueOnCapturedContext);
+    ValueTask ExecuteValueTaskAsync(Func<CancellationToken, ValueTask> action, CancellationToken cancellationToken, bool continueOnCapturedContext);
 #pragma warning restore CA1068
 
 #pragma warning disable CA1068
@@ -456,7 +456,7 @@ public interface IAsyncPolicy : IsPolicy
     /// <param name="continueOnCapturedContext">Whether to continue on a captured synchronization context.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="contextData"/> is <see langword="null"/>.</exception>
     /// <returns>A <see cref="ValueTask" /> which completes when <see cref="IAsyncPolicy"/> is registered.</returns>
-    ValueTask ExecuteAsync(Func<Context, CancellationToken, ValueTask> action, IDictionary<string, object> contextData, CancellationToken cancellationToken, bool continueOnCapturedContext);
+    ValueTask ExecuteValueTaskAsync(Func<Context, CancellationToken, ValueTask> action, IDictionary<string, object> contextData, CancellationToken cancellationToken, bool continueOnCapturedContext);
 #pragma warning restore CA1068
 
 #pragma warning disable CA1068
@@ -469,7 +469,7 @@ public interface IAsyncPolicy : IsPolicy
     /// <param name="continueOnCapturedContext">Whether to continue on a captured synchronization context.</param>
     /// <exception cref="InvalidOperationException">Please use asynchronous-defined policies when calling asynchronous ExecuteAsync (and similar) methods.</exception>
     /// <returns>A <see cref="ValueTask" /> which completes when <see cref="IAsyncPolicy"/> is registered.</returns>
-    ValueTask ExecuteAsync(Func<Context, CancellationToken, ValueTask> action, Context context, CancellationToken cancellationToken, bool continueOnCapturedContext);
+    ValueTask ExecuteValueTaskAsync(Func<Context, CancellationToken, ValueTask> action, Context context, CancellationToken cancellationToken, bool continueOnCapturedContext);
 #pragma warning restore CA1068
 
     /// <summary>
@@ -478,7 +478,7 @@ public interface IAsyncPolicy : IsPolicy
     /// <typeparam name="TResult">The type of the result.</typeparam>
     /// <param name="action">The action to perform.</param>
     /// <returns>The value returned by the action.</returns>
-    ValueTask<TResult> ExecuteAsync<TResult>(Func<ValueTask<TResult>> action);
+    ValueTask<TResult> ExecuteValueTaskAsync<TResult>(Func<ValueTask<TResult>> action);
 
     /// <summary>
     ///     Executes the specified asynchronous action within the policy and returns the result.
@@ -487,7 +487,7 @@ public interface IAsyncPolicy : IsPolicy
     /// <param name="action">The action to perform.</param>
     /// <param name="context">Context data that is passed to the exception policy.</param>
     /// <returns>The value returned by the action.</returns>
-    ValueTask<TResult> ExecuteAsync<TResult>(Func<Context, ValueTask<TResult>> action, Context context);
+    ValueTask<TResult> ExecuteValueTaskAsync<TResult>(Func<Context, ValueTask<TResult>> action, Context context);
 
     /// <summary>
     ///     Executes the specified asynchronous action within the policy and returns the result.
@@ -496,7 +496,7 @@ public interface IAsyncPolicy : IsPolicy
     /// <param name="action">The action to perform.</param>
     /// <param name="contextData">Arbitrary data that is passed to the exception policy.</param>
     /// <returns>The value returned by the action.</returns>
-    ValueTask<TResult> ExecuteAsync<TResult>(Func<Context, ValueTask<TResult>> action, IDictionary<string, object> contextData);
+    ValueTask<TResult> ExecuteValueTaskAsync<TResult>(Func<Context, ValueTask<TResult>> action, IDictionary<string, object> contextData);
 
     /// <summary>
     ///     Executes the specified asynchronous action within the policy and returns the result.
@@ -505,7 +505,7 @@ public interface IAsyncPolicy : IsPolicy
     /// <param name="action">The action to perform.</param>
     /// <param name="cancellationToken">A cancellation token which can be used to cancel the action.  When a retry policy is in use, also cancels any further retries.</param>
     /// <returns>The value returned by the action.</returns>
-    ValueTask<TResult> ExecuteAsync<TResult>(Func<CancellationToken, ValueTask<TResult>> action, CancellationToken cancellationToken);
+    ValueTask<TResult> ExecuteValueTaskAsync<TResult>(Func<CancellationToken, ValueTask<TResult>> action, CancellationToken cancellationToken);
 
     /// <summary>
     ///     Executes the specified asynchronous action within the policy and returns the result.
@@ -515,7 +515,7 @@ public interface IAsyncPolicy : IsPolicy
     /// <param name="contextData">Arbitrary data that is passed to the exception policy.</param>
     /// <param name="cancellationToken">A cancellation token which can be used to cancel the action.  When a retry policy in use, also cancels any further retries.</param>
     /// <returns>The value returned by the action.</returns>
-    ValueTask<TResult> ExecuteAsync<TResult>(Func<Context, CancellationToken, ValueTask<TResult>> action, IDictionary<string, object> contextData, CancellationToken cancellationToken);
+    ValueTask<TResult> ExecuteValueTaskAsync<TResult>(Func<Context, CancellationToken, ValueTask<TResult>> action, IDictionary<string, object> contextData, CancellationToken cancellationToken);
 
     /// <summary>
     ///     Executes the specified asynchronous action within the policy and returns the result.
@@ -525,7 +525,7 @@ public interface IAsyncPolicy : IsPolicy
     /// <param name="context">Context data that is passed to the exception policy.</param>
     /// <param name="cancellationToken">A cancellation token which can be used to cancel the action.  When a retry policy is in use, also cancels any further retries.</param>
     /// <returns>The value returned by the action.</returns>
-    ValueTask<TResult> ExecuteAsync<TResult>(Func<Context, CancellationToken, ValueTask<TResult>> action, Context context, CancellationToken cancellationToken);
+    ValueTask<TResult> ExecuteValueTaskAsync<TResult>(Func<Context, CancellationToken, ValueTask<TResult>> action, Context context, CancellationToken cancellationToken);
 
 #pragma warning disable CA1068
     /// <summary>
@@ -537,7 +537,7 @@ public interface IAsyncPolicy : IsPolicy
     /// <param name="continueOnCapturedContext">Whether to continue on a captured synchronization context.</param>
     /// <returns>The value returned by the action.</returns>
     /// <exception cref="InvalidOperationException">Please use asynchronous-defined policies when calling asynchronous ExecuteAsync (and similar) methods.</exception>
-    ValueTask<TResult> ExecuteAsync<TResult>(Func<CancellationToken, ValueTask<TResult>> action, CancellationToken cancellationToken, bool continueOnCapturedContext);
+    ValueTask<TResult> ExecuteValueTaskAsync<TResult>(Func<CancellationToken, ValueTask<TResult>> action, CancellationToken cancellationToken, bool continueOnCapturedContext);
 #pragma warning restore CA1068
 
 #pragma warning disable CA1068
@@ -551,7 +551,7 @@ public interface IAsyncPolicy : IsPolicy
     /// <param name="continueOnCapturedContext">Whether to continue on a captured synchronization context.</param>
     /// <returns>The value returned by the action.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="contextData"/> is <see langword="null"/>.</exception>
-    ValueTask<TResult> ExecuteAsync<TResult>(Func<Context, CancellationToken, ValueTask<TResult>> action, IDictionary<string, object> contextData, CancellationToken cancellationToken, bool continueOnCapturedContext);
+    ValueTask<TResult> ExecuteValueTaskAsync<TResult>(Func<Context, CancellationToken, ValueTask<TResult>> action, IDictionary<string, object> contextData, CancellationToken cancellationToken, bool continueOnCapturedContext);
 #pragma warning restore CA1068
 
 #pragma warning disable CA1068
@@ -565,7 +565,7 @@ public interface IAsyncPolicy : IsPolicy
     /// <param name="continueOnCapturedContext">Whether to continue on a captured synchronization context.</param>
     /// <returns>The value returned by the action.</returns>
     /// <exception cref="InvalidOperationException">Please use asynchronous-defined policies when calling asynchronous ExecuteAsync (and similar) methods.</exception>
-    ValueTask<TResult> ExecuteAsync<TResult>(Func<Context, CancellationToken, ValueTask<TResult>> action, Context context, CancellationToken cancellationToken, bool continueOnCapturedContext);
+    ValueTask<TResult> ExecuteValueTaskAsync<TResult>(Func<Context, CancellationToken, ValueTask<TResult>> action, Context context, CancellationToken cancellationToken, bool continueOnCapturedContext);
 #pragma warning restore CA1068
 
     #endregion
