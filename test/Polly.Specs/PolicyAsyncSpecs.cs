@@ -34,6 +34,36 @@ public class PolicyAsyncSpecs
         result.ShouldBe(2);
     }
 
+    [Fact]
+    public async Task Executing_the_policy_action_should_execute_the_specified_valuetask_action()
+    {
+        bool executed = false;
+
+        var policy = Policy
+            .Handle<DivideByZeroException>()
+            .RetryAsync((_, _) => { });
+
+        await policy.ExecuteAsync(() =>
+        {
+            executed = true;
+            return ValueTask.CompletedTask;
+        });
+
+        executed.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task Executing_the_policy_function_should_execute_the_specified_valuetask_function_and_return_the_result()
+    {
+        var policy = Policy
+            .Handle<DivideByZeroException>()
+            .RetryAsync((_, _) => { });
+
+        int result = await policy.ExecuteAsync(() => ValueTask.FromResult(42));
+
+        result.ShouldBe(42);
+    }
+
     #endregion
 
     #region ExecuteAndCapture tests

@@ -16,6 +16,18 @@ public class PolicyTResultAsyncSpecs
         result.ShouldBe(ResultPrimitive.Good);
     }
 
+    [Fact]
+    public async Task Executing_the_policy_function_should_execute_the_specified_valuetask_function_and_return_the_result()
+    {
+        var policy = Policy
+            .HandleResult(ResultPrimitive.Fault)
+            .RetryAsync((_, _) => { });
+
+        var result = await policy.ExecuteAsync(() => ValueTask.FromResult(ResultPrimitive.Good));
+
+        result.ShouldBe(ResultPrimitive.Good);
+    }
+
     #endregion
 
     #region ExecuteAndCapture tests
