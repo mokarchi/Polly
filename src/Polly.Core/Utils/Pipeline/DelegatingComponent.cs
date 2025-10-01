@@ -39,7 +39,15 @@ internal sealed class DelegatingComponent : PipelineComponent
             return Outcome.FromExceptionAsValueTask<TResult>(new OperationCanceledException(context.CancellationToken).TrySetStackTrace());
         }
 
-        return next.ExecuteCore(callback, context, state);
+        var valueTask = next.ExecuteCore(callback, context, state);
+
+        // Fast-path inlining: avoid await if ValueTask is already completed successfully
+        if (valueTask.IsCompletedSuccessfully)
+        {
+            return new ValueTask<Outcome<TResult>>(valueTask.Result);
+        }
+
+        return valueTask;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
