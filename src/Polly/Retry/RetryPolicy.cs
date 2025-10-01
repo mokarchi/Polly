@@ -37,15 +37,15 @@ public class RetryPolicy : Policy, IRetryPolicy
             ? (retryCount, outcome, ctx) => _sleepDurationProvider(retryCount, outcome.Exception, ctx)
             : (Func<int, DelegateResult<TResult>, Context, TimeSpan>?)null;
 
-        return RetryEngine.Implementation(action,
-            context,
+        var state = new Internal.PolicyState<TResult>(
             ExceptionPredicates,
             ResultPredicates<TResult>.None,
             (outcome, timespan, retryCount, ctx) => _onRetry(outcome.Exception, timespan, retryCount, ctx),
-            cancellationToken,
             _permittedRetryCount,
             _sleepDurationsEnumerable,
             sleepDurationProvider);
+
+        return Internal.RetryExecutor.Execute(ref context, in state, action, cancellationToken);
     }
 }
 
@@ -83,15 +83,14 @@ public class RetryPolicy<TResult> : Policy<TResult>, IRetryPolicy<TResult>
             throw new ArgumentNullException(nameof(action));
         }
 
-        return RetryEngine.Implementation(
-            action,
-            context,
+        var state = new Internal.PolicyState<TResult>(
             ExceptionPredicates,
             ResultPredicates,
             _onRetry,
-            cancellationToken,
             _permittedRetryCount,
             _sleepDurationsEnumerable,
             _sleepDurationProvider);
+
+        return Internal.RetryExecutor.Execute(ref context, in state, action, cancellationToken);
     }
 }
