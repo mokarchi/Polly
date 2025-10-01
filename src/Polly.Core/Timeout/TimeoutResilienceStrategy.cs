@@ -6,17 +6,20 @@ internal sealed class TimeoutResilienceStrategy : ResilienceStrategy
 {
     private readonly ResilienceStrategyTelemetry _telemetry;
     private readonly CancellationTokenSourcePool _cancellationTokenSourcePool;
+    private readonly TimeoutReloadingPolicyHandle? _reloadingHandle;
 
-    public TimeoutResilienceStrategy(TimeoutStrategyOptions options, TimeProvider timeProvider, ResilienceStrategyTelemetry telemetry)
+    public TimeoutResilienceStrategy(TimeoutStrategyOptions options, TimeProvider timeProvider, ResilienceStrategyTelemetry telemetry, TimeoutReloadingPolicyHandle? reloadingHandle = null)
     {
-        DefaultTimeout = options.Timeout;
+        _defaultTimeout = options.Timeout;
         TimeoutGenerator = options.TimeoutGenerator;
         OnTimeout = options.OnTimeout;
         _telemetry = telemetry;
         _cancellationTokenSourcePool = CancellationTokenSourcePool.Create(timeProvider);
+        _reloadingHandle = reloadingHandle;
     }
 
-    public TimeSpan DefaultTimeout { get; }
+    public TimeSpan DefaultTimeout => _reloadingHandle?.GetTimeout() ?? _defaultTimeout;
+    private readonly TimeSpan _defaultTimeout;
 
     public Func<TimeoutGeneratorArguments, ValueTask<TimeSpan>>? TimeoutGenerator { get; }
 

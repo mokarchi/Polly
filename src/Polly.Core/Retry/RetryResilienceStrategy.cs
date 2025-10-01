@@ -7,39 +7,47 @@ internal sealed class RetryResilienceStrategy<T> : ResilienceStrategy<T>
     private readonly TimeProvider _timeProvider;
     private readonly ResilienceStrategyTelemetry _telemetry;
     private readonly Func<double> _randomizer;
+    private readonly RetryReloadingPolicyHandle<T>? _reloadingHandle;
 
     public RetryResilienceStrategy(
         RetryStrategyOptions<T> options,
         TimeProvider timeProvider,
-        ResilienceStrategyTelemetry telemetry)
+        ResilienceStrategyTelemetry telemetry,
+        RetryReloadingPolicyHandle<T>? reloadingHandle = null)
     {
         ShouldHandle = options.ShouldHandle;
-        BaseDelay = options.Delay;
-        MaxDelay = options.MaxDelay;
-        BackoffType = options.BackoffType;
-        RetryCount = options.MaxRetryAttempts;
+        _baseDelay = options.Delay;
+        _maxDelay = options.MaxDelay;
+        _backoffType = options.BackoffType;
+        _retryCount = options.MaxRetryAttempts;
         OnRetry = options.OnRetry;
         DelayGenerator = options.DelayGenerator;
-        UseJitter = options.UseJitter;
+        _useJitter = options.UseJitter;
 
         _timeProvider = timeProvider;
         _telemetry = telemetry;
         _randomizer = options.Randomizer;
+        _reloadingHandle = reloadingHandle;
     }
 
-    public TimeSpan BaseDelay { get; }
+    public TimeSpan BaseDelay => _reloadingHandle?.GetBaseDelay() ?? _baseDelay;
+    private readonly TimeSpan _baseDelay;
 
-    public TimeSpan? MaxDelay { get; }
+    public TimeSpan? MaxDelay => _reloadingHandle?.GetMaxDelay() ?? _maxDelay;
+    private readonly TimeSpan? _maxDelay;
 
-    public DelayBackoffType BackoffType { get; }
+    public DelayBackoffType BackoffType => _reloadingHandle?.GetBackoffType() ?? _backoffType;
+    private readonly DelayBackoffType _backoffType;
 
-    public int RetryCount { get; }
+    public int RetryCount => _reloadingHandle?.GetMaxRetryAttempts() ?? _retryCount;
+    private readonly int _retryCount;
 
     public Func<RetryPredicateArguments<T>, ValueTask<bool>> ShouldHandle { get; }
 
     public Func<RetryDelayGeneratorArguments<T>, ValueTask<TimeSpan?>>? DelayGenerator { get; }
 
-    public bool UseJitter { get; }
+    public bool UseJitter => _reloadingHandle?.GetUseJitter() ?? _useJitter;
+    private readonly bool _useJitter;
 
     public Func<OnRetryArguments<T>, ValueTask>? OnRetry { get; }
 
