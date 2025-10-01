@@ -3,11 +3,23 @@ using System.Threading;
 namespace Polly.Utils;
 
 /// <summary>
+/// Interface for reloading policy handles that can be notified of configuration changes.
+/// </summary>
+public interface IReloadingPolicyHandle
+{
+    /// <summary>
+    /// Called when the configuration changes.
+    /// </summary>
+    /// <param name="newOptions">The new configuration options.</param>
+    void OnConfigurationChanged(object newOptions);
+}
+
+/// <summary>
 /// Provides a mechanism for atomically updating internal strategy state when configuration changes,
 /// without rebuilding the entire resilience pipeline. Uses interlocked operations for thread-safe updates.
 /// </summary>
 /// <typeparam name="TState">The type of the state class to be managed.</typeparam>
-public abstract class ReloadingPolicyHandle<TState> where TState : class
+public abstract class ReloadingPolicyHandle<TState> : IReloadingPolicyHandle where TState : class
 {
     private TState _state;
 
