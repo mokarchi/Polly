@@ -56,4 +56,57 @@ public static class RetryResiliencePipelineBuilderExtensions
             context => new RetryResilienceStrategy<TResult>(options, context.TimeProvider, context.Telemetry),
             options);
     }
+
+    /// <summary>
+    /// Adds a retry to the builder with a reloading policy handle for atomic configuration updates.
+    /// </summary>
+    /// <param name="builder">The builder instance.</param>
+    /// <param name="options">The retry options.</param>
+    /// <param name="reloadingHandle">The reloading policy handle for atomic configuration updates.</param>
+    /// <returns>The builder instance with the retry strategy added.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/>, <paramref name="options"/>, or <paramref name="reloadingHandle"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ValidationException">Thrown when <paramref name="options"/> are invalid.</exception>
+    [UnconditionalSuppressMessage(
+        "Trimming",
+        "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code",
+        Justification = "All options members preserved.")]
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(RetryStrategyOptions))]
+    public static ResiliencePipelineBuilder AddRetry(this ResiliencePipelineBuilder builder, RetryStrategyOptions options, RetryReloadingPolicyHandle<object> reloadingHandle)
+    {
+        Guard.NotNull(builder);
+        Guard.NotNull(options);
+        Guard.NotNull(reloadingHandle);
+
+        return builder.AddStrategy(
+            context => new RetryResilienceStrategy<object>(options, context.TimeProvider, context.Telemetry, reloadingHandle),
+            options);
+    }
+
+    /// <summary>
+    /// Adds a retry to the builder with a reloading policy handle for atomic configuration updates.
+    /// </summary>
+    /// <typeparam name="TResult">The type of result the retry handles.</typeparam>
+    /// <param name="builder">The builder instance.</param>
+    /// <param name="options">The retry options.</param>
+    /// <param name="reloadingHandle">The reloading policy handle for atomic configuration updates.</param>
+    /// <returns>The builder instance with the retry added.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/>, <paramref name="options"/>, or <paramref name="reloadingHandle"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ValidationException">Thrown when <paramref name="options"/> are invalid.</exception>
+    [UnconditionalSuppressMessage(
+        "Trimming",
+        "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code",
+        Justification = "All options members preserved.")]
+    public static ResiliencePipelineBuilder<TResult> AddRetry<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TResult>(
+        this ResiliencePipelineBuilder<TResult> builder,
+        RetryStrategyOptions<TResult> options,
+        RetryReloadingPolicyHandle<TResult> reloadingHandle)
+    {
+        Guard.NotNull(builder);
+        Guard.NotNull(options);
+        Guard.NotNull(reloadingHandle);
+
+        return builder.AddStrategy(
+            context => new RetryResilienceStrategy<TResult>(options, context.TimeProvider, context.Telemetry, reloadingHandle),
+            options);
+    }
 }
