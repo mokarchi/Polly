@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Polly.CircuitBreaker;
+using Polly.Configuration;
 using Polly.Registry;
 using Polly.Retry;
 using Polly.Timeout;
@@ -157,6 +158,52 @@ internal static class DependencyInjection
         #endregion
     }
 
+    public static async Task DeferredAdditionWithConfigProvider(IServiceCollection services)
+    {
+        #region di-deferred-addition-with-config-provider
+
+        // Register the configuration provider
+        services.AddResilienceConfigProvider();
+
+        services
+            .AddResiliencePipelines<string>((ctx) =>
+            {
+                var configProvider = ctx.ServiceProvider.GetRequiredService<IResilienceConfigProvider>();
+
+                foreach (var pipelineName in configProvider.PipelineNames)
+                {
+                    var pipelineConfig = configProvider.GetPipelineConfiguration(pipelineName);
+                    if (pipelineConfig is not null)
+                    {
+                        ctx.AddResiliencePipeline(pipelineName, (builder, context) =>
+                        {
+                            // Configure your pipeline using the configuration section
+                            // Example: builder.AddRetry(pipelineConfig.GetSection("RetryOptions").Get<RetryStrategyOptions>());
+                        });
+                    }
+                }
+            });
+
+        #endregion
+    }
+
+    public static async Task CustomConfigProvider(IServiceCollection services)
+    {
+        #region di-custom-config-provider
+
+        // Register a custom configuration provider
+        services.AddResilienceConfigProvider(serviceProvider =>
+        {
+            var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+            return new DefaultResilienceConfigProvider(configuration, "MyCustomSection");
+        });
+
+        // Or register a completely custom implementation
+        services.AddResilienceConfigProvider<MyCustomResilienceConfigProvider>();
+
+        #endregion
+    }
+
     public static async Task DynamicReloads(IServiceCollection services, IConfigurationSection configurationSection)
     {
         #region di-dynamic-reloads
@@ -261,6 +308,21 @@ internal static class DependencyInjection
 
         #endregion
     }
+
+    #region di-custom-config-provider-implementation
+
+    public sealed class MyCustomResilienceConfigProvider : IResilienceConfigProvider
+    {
+        public IEnumerable<string> PipelineNames => new[] { "custom-pipeline1", "custom-pipeline2" };
+
+        public IConfigurationSection? GetPipelineConfiguration(string pipelineName)
+        {
+            // Custom implementation logic here
+            return null;
+        }
+    }
+
+    #endregion
 
     public static void AntiPattern_1()
     {

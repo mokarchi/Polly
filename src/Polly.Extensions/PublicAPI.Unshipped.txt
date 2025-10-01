@@ -1,1 +1,14 @@
 ﻿#nullable enable
+Polly.Configuration.DefaultResilienceConfigProvider
+const Polly.Configuration.DefaultResilienceConfigProvider.DefaultSectionName = "ResiliencePipelines" -> string!
+Polly.Configuration.DefaultResilienceConfigProvider.DefaultResilienceConfigProvider(Microsoft.Extensions.Configuration.IConfiguration! configuration, string? sectionName = null) -> void
+Polly.Configuration.DefaultResilienceConfigProvider.GetPipelineConfiguration(string! pipelineName) -> Microsoft.Extensions.Configuration.IConfigurationSection?
+Polly.Configuration.DefaultResilienceConfigProvider.PipelineNames.get -> System.Collections.Generic.IEnumerable<string!>!
+Polly.Configuration.IResilienceConfigProvider
+Polly.Configuration.IResilienceConfigProvider.GetPipelineConfiguration(string! pipelineName) -> Microsoft.Extensions.Configuration.IConfigurationSection?
+Polly.Configuration.IResilienceConfigProvider.PipelineNames.get -> System.Collections.Generic.IEnumerable<string!>!
+Polly.ResilienceConfigProviderServiceCollectionExtensions
+static Polly.ResilienceConfigProviderServiceCollectionExtensions.AddResilienceConfigProvider(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Polly.ResilienceConfigProviderServiceCollectionExtensions.AddResilienceConfigProvider(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string? sectionName) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Polly.ResilienceConfigProviderServiceCollectionExtensions.AddResilienceConfigProvider(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Func<System.IServiceProvider!, Polly.Configuration.IResilienceConfigProvider!>! implementationFactory) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Polly.ResilienceConfigProviderServiceCollectionExtensions.AddResilienceConfigProvider<TImplementation>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
