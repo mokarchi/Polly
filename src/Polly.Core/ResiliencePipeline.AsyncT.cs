@@ -55,7 +55,7 @@ public partial class ResiliencePipeline
 
         InitializeAsyncContext<TResult>(context);
 
-        var outcome = await Component.ExecuteCore(
+        var outcomeTask = Component.ExecuteCore(
             [DebuggerDisableUserUnhandledExceptions] static async (context, state) =>
             {
                 try
@@ -68,7 +68,12 @@ public partial class ResiliencePipeline
                 }
             },
             context,
-            (callback, state)).ConfigureAwait(context.ContinueOnCapturedContext);
+            (callback, state));
+
+        // Fast-path inlining: avoid await if ValueTask is already completed successfully
+        var outcome = outcomeTask.IsCompletedSuccessfully
+            ? outcomeTask.Result
+            : await outcomeTask.ConfigureAwait(context.ContinueOnCapturedContext);
 
         return outcome.GetResultOrRethrow();
     }
@@ -90,7 +95,7 @@ public partial class ResiliencePipeline
 
         InitializeAsyncContext<TResult>(context);
 
-        var outcome = await Component.ExecuteCore(
+        var outcomeTask = Component.ExecuteCore(
             [DebuggerDisableUserUnhandledExceptions] static async (context, state) =>
             {
                 try
@@ -103,7 +108,12 @@ public partial class ResiliencePipeline
                 }
             },
             context,
-            callback).ConfigureAwait(context.ContinueOnCapturedContext);
+            callback);
+
+        // Fast-path inlining: avoid await if ValueTask is already completed successfully
+        var outcome = outcomeTask.IsCompletedSuccessfully
+            ? outcomeTask.Result
+            : await outcomeTask.ConfigureAwait(context.ContinueOnCapturedContext);
 
         return outcome.GetResultOrRethrow();
     }
@@ -129,7 +139,7 @@ public partial class ResiliencePipeline
 
         try
         {
-            var outcome = await Component.ExecuteCore(
+            var outcomeTask = Component.ExecuteCore(
                 [DebuggerDisableUserUnhandledExceptions] static async (context, state) =>
                 {
                     try
@@ -142,7 +152,12 @@ public partial class ResiliencePipeline
                     }
                 },
                 context,
-                (callback, state)).ConfigureAwait(context.ContinueOnCapturedContext);
+                (callback, state));
+
+            // Fast-path inlining: avoid await if ValueTask is already completed successfully
+            var outcome = outcomeTask.IsCompletedSuccessfully
+                ? outcomeTask.Result
+                : await outcomeTask.ConfigureAwait(context.ContinueOnCapturedContext);
 
             return outcome.GetResultOrRethrow();
         }
@@ -170,7 +185,7 @@ public partial class ResiliencePipeline
 
         try
         {
-            var outcome = await Component.ExecuteCore(
+            var outcomeTask = Component.ExecuteCore(
                 [DebuggerDisableUserUnhandledExceptions] static async (context, state) =>
                 {
                     try
@@ -183,7 +198,12 @@ public partial class ResiliencePipeline
                     }
                 },
                 context,
-                callback).ConfigureAwait(context.ContinueOnCapturedContext);
+                callback);
+
+            // Fast-path inlining: avoid await if ValueTask is already completed successfully
+            var outcome = outcomeTask.IsCompletedSuccessfully
+                ? outcomeTask.Result
+                : await outcomeTask.ConfigureAwait(context.ContinueOnCapturedContext);
 
             return outcome.GetResultOrRethrow();
         }
