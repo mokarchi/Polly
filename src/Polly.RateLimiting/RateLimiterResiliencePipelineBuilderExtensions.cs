@@ -82,6 +82,31 @@ public static class RateLimiterResiliencePipelineBuilderExtensions
     }
 
     /// <summary>
+    /// Adds the composite rate limiter (Token Bucket + Leap Second Window with adaptive parameters).
+    /// </summary>
+    /// <typeparam name="TBuilder">The builder type.</typeparam>
+    /// <param name="builder">The builder instance.</param>
+    /// <param name="options">The composite rate limiter options.</param>
+    /// <returns>The builder instance with the composite rate limiter added.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="builder"/> or <paramref name="options"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ValidationException">Thrown when <paramref name="options"/> are invalid.</exception>
+    public static TBuilder AddCompositeRateLimiter<TBuilder>(
+        this TBuilder builder,
+        CompositeRateLimiterOptions options)
+        where TBuilder : ResiliencePipelineBuilderBase
+    {
+        Guard.NotNull(builder);
+        Guard.NotNull(options);
+
+        var compositeRateLimiter = new CompositeRateLimiter(options);
+        
+        return builder.AddRateLimiter(new RateLimiterStrategyOptions
+        {
+            RateLimiter = args => compositeRateLimiter.AcquireAsync(1, args.Context.CancellationToken),
+        });
+    }
+
+    /// <summary>
     /// Adds the rate limiter.
     /// </summary>
     /// <typeparam name="TBuilder">The builder type.</typeparam>
